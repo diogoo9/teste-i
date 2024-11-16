@@ -1,4 +1,13 @@
-import { Column, PrimaryColumn, DeleteDateColumn, Entity } from 'typeorm';
+import { Company } from 'src/modules/company/entities/company.entity';
+import {
+  Column,
+  PrimaryColumn,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 @Entity('vehicles')
@@ -20,6 +29,10 @@ export class Vehicle {
 
   @Column()
   long: string;
+
+  @OneToOne(() => Company)
+  @JoinColumn({ referencedColumnName: 'id', name: 'company_id' })
+  company: Company;
 
   @DeleteDateColumn()
   deleted_at: Date;

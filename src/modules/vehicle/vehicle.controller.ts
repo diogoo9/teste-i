@@ -1,16 +1,27 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { VehicleService } from './vehicle.service';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { MyAuth } from 'src/decoratos/myAuth';
-import { ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { faker } from '@faker-js/faker';
+import { UserAuthGuard } from 'src/guards/auth.guard';
 
 @Controller('vehicle')
 export class VehicleController {
   constructor(private readonly vehicleService: VehicleService) {}
 
   @Post()
-  @MyAuth()
+  @UseGuards(UserAuthGuard)
+  @ApiBearerAuth('access-token')
   @ApiBody({
     schema: {
       example: {
@@ -27,14 +38,18 @@ export class VehicleController {
   }
 
   @Get()
-  @MyAuth()
-  findAll() {
-    return this.vehicleService.findAll();
+  @UseGuards(UserAuthGuard)
+  @ApiBearerAuth('access-token')
+  findAll(@Req() request) {
+    const { user_id } = request.user;
+    return this.vehicleService.findAll(user_id);
   }
 
   @Delete(':id')
-  @MyAuth()
-  remove(@Param('id') id: string) {
-    return this.vehicleService.remove(id);
+  @UseGuards(UserAuthGuard)
+  @ApiBearerAuth('access-token')
+  remove(@Param('id') id: string, @Req() request) {
+    const { user_id } = request.user;
+    return this.vehicleService.remove(id, user_id);
   }
 }

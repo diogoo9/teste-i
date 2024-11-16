@@ -6,7 +6,7 @@ import { Injectable } from '@nestjs/common';
 import { compare } from 'bcrypt';
 import { AppError } from 'src/errors/AppError';
 import { sign } from 'jsonwebtoken';
-import { UserTokensRepository } from '../user-tokens/entities/repository/UserTokens.repository';
+import { UserTokensRepository } from '../user-tokens/repository/UserTokens.repository';
 import User from './entities/user.entity';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class UserService {
     });
 
     if (user) {
-      throw new AppError('Usuario não existe', 404);
+      throw new AppError('Usuario já existe', 404);
     }
     return this.userRepository.createUser(userData);
   }
@@ -48,10 +48,14 @@ export class UserService {
     const expireDate = new Date(currentDate);
     expireDate.setDate(currentDate.getDate() + 2);
 
-    const hash = sign({ id: user.id }, process.env.BCRYPT_KEY, {
-      subject: String(user.id),
-      expiresIn: '2d',
-    });
+    const hash = sign(
+      { user_id: user.id, is_admin: user.is_admin },
+      process.env.BCRYPT_KEY,
+      {
+        subject: String(user.id),
+        expiresIn: '2d',
+      },
+    );
 
     const tokenData = {
       canceled_at: null,

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { UserTokensRepository } from './entities/repository/UserTokens.repository';
+import { UserTokensRepository } from './repository/UserTokens.repository';
 
 @Module({
   providers: [UserTokensRepository],

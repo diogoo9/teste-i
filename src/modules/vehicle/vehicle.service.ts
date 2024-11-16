@@ -11,12 +11,12 @@ export class VehicleService {
     return this.vehicleRepository.createVehicle(createVehicleDto);
   }
 
-  findAll() {
-    return this.vehicleRepository.getAll();
+  findAll(userId: string) {
+    return this.vehicleRepository.getAll(userId);
   }
 
-  async remove(id: string) {
-    const company = await this.vehicleRepository.findOneNoDeleted({ id });
+  async remove(id: string, user_id: string) {
+    const company = await this.vehicleRepository.findOneNoDeleted(id, user_id);
 
     if (!company) {
       throw new AppError('Veiculo não encontrado', 404);

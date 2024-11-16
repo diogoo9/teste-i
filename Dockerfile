@@ -14,6 +14,6 @@ RUN npm i -g @nestjs/cli
 
 RUN npm i --save @nestjs/core @nestjs/common rxjs reflect-metadata class-validator class-transformer
 
-CMD npm run start:dev
+CMD npm run dev
 
 EXPOSE 3000

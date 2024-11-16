@@ -19,7 +19,7 @@ dotenvConfig({ path: '.env' });
       username: String(process.env.DB_USER),
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      synchronize: true,
+      synchronize: false,
       entities: ['dist/**/*.entity{.ts,.js}'],
       migrations: ['dist/database/migrations/*{.ts,.js}'],
       logging: ['query'],

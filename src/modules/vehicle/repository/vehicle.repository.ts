@@ -16,19 +16,24 @@ export class VehicleRepository extends Repository<Vehicle> {
     delete newVehicle.deleted_at;
     return newVehicle;
   }
-  getAll(): Promise<Vehicle[]> {
+  getAll(userId: string): Promise<Vehicle[]> {
     return this.find({
       select: ['id', 'company_id', 'license', 'vin', 'lat', 'long'],
+      where: { company: { user: { id: userId } } },
     });
   }
 
-  findOneNoDeleted(data: { id?: string; login?: string }) {
+  findOneNoDeleted(id: string, userId: string) {
     return this.findOne({
-      where: { ...data },
+      where: { id, company: { user: { id: userId } } },
     });
   }
 
   deleteVehicle(id: string) {
     return this.softDelete({ id });
+  }
+
+  deleteVehicleByCompanyId(id: string) {
+    return this.softDelete({ company_id: id });
   }
 }

@@ -18,11 +18,6 @@ export class UserCompanies1731690695474 implements MigrationInterface {
             isNullable: false,
             isPrimary: true,
           },
-          {
-            name: 'created_at',
-            type: 'timestamp',
-            default: 'now()',
-          },
         ],
         foreignKeys: [
           {

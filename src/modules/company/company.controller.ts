@@ -1,15 +1,26 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
-import { MyAuth } from 'src/decoratos/myAuth';
-import { ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { UserAuthGuard } from 'src/guards/auth.guard';
 
 @Controller('company')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
   @Post()
-  @MyAuth()
+  @UseGuards(UserAuthGuard)
+  @ApiBearerAuth('access-token')
   @ApiBody({
     schema: {
       example: {
@@ -19,19 +30,24 @@ export class CompanyController {
       },
     },
   })
-  create(@Body() createCompanyDto: CreateCompanyDto) {
-    return this.companyService.create(createCompanyDto);
+  create(@Body() createCompanyDto: CreateCompanyDto, @Req() req) {
+    const { user_id } = req.user;
+    return this.companyService.create(createCompanyDto, user_id);
   }
 
   @Get()
-  @MyAuth()
-  findAll() {
-    return this.companyService.findAll();
+  @UseGuards(UserAuthGuard)
+  @ApiBearerAuth('access-token')
+  findAll(@Req() req) {
+    const { user_id } = req.user;
+    return this.companyService.findAll(user_id);
   }
 
   @Delete(':id')
-  @MyAuth()
-  remove(@Param('id') id: string) {
-    return this.companyService.remove(id);
+  @UseGuards(UserAuthGuard)
+  @ApiBearerAuth('access-token')
+  remove(@Param('id') id: string, @Req() req) {
+    const { user_id } = req.user;
+    return this.companyService.remove(id, user_id);
   }
 }

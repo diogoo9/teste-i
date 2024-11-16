@@ -30,13 +30,15 @@ export class UserController {
   }
 
   @Post('/user')
-  @MyAuth()
+  @UseGuards(UserAuthGuard)
+  @ApiBearerAuth('access-token')
   @ApiBody({
     schema: {
       example: {
         name: 'teste',
         login: 'admin2',
         password: 'admin2',
+        company_id: '12ad4d32-9748-46c3-8e43-269c2b7769c1',
         is_admin: false,
       },
     },

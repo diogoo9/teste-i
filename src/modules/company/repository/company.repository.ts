@@ -26,17 +26,19 @@ export class ComapnyRepository extends Repository<Company> {
     delete newCompany.deleted_at;
     return newCompany;
   }
-  getAll(): Promise<Company[]> {
-    return this.find();
+  getAll(userId: string): Promise<Company[]> {
+    return this.find({
+      where: { user: { id: userId } },
+    });
   }
 
-  findOneNoDeleted(data: { id?: string; login?: string }) {
+  findOneNoDeleted(id: string, userId: string) {
     return this.findOne({
-      where: { ...data },
+      where: { id, user: { id: userId } },
     });
   }
 
   deleteCompany(id: string) {
-    return this.softDelete({ id });
+    return this.softRemove({ id });
   }
 }

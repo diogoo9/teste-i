@@ -9,30 +9,31 @@ export class UserAuthGuard extends AuthGuard('jwt') {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
+    const request = context.switchToHttp().getRequest();
     try {
       const token = context
         .switchToHttp()
         .getRequest()
         .headers.authorization?.split(' ')[1];
-      const valid = verify(token, process.env.BCRYPT_KEY);
+      const verifyTokenResponse = verify(token, process.env.BCRYPT_KEY);
 
-      const req = context.switchToHttp().getRequest().originalUrl.split('/')[0];
-      console.log('valid', valid, 'router:', req);
+      const payload = {
+        user_id: verifyTokenResponse['user_id'],
+      };
 
-      /* 
-      if (!validPathsRouter[type].includes(req)) {
-        console.log('data do login:', validPathsRouter[type], req);
-        //throw new AppError('Acesso não autorizado!', 401);
+      request['user'] = payload;
+
+      const { method } = context.switchToHttp().getRequest();
+      if (
+        (method == 'POST' || method == 'PATCH' || method == 'DELETE') &&
+        !verifyTokenResponse['is_admin']
+      ) {
+        throw new AppError('Acesso não autorizado para este recurso!', 401);
       }
-
-      context.switchToHttp().getRequest()[valid['type']] = newParams; */
 
       return true;
     } catch (error) {
-      console.log(error);
-
       throw new AppError('Acesso não autorizado!', 401);
-      return false;
     }
   }
 }
